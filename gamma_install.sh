@@ -5,9 +5,10 @@
 
 echo "[*] Installing Gamma..."
 
-# 1. Check if dotnet is installed
-if ! command -v dotnet &> /dev/null; then
-    echo "[*] .NET SDK is not installed. Installing dotnet-sdk..."
+# 1. Check if .NET 10.0 is installed
+DOTNET_VERSION=$(dotnet --version 2>/dev/null | cut -d. -f1)
+if [ -z "$DOTNET_VERSION" ] || [ "$DOTNET_VERSION" -lt "10" ]; then
+    echo "[*] .NET SDK 10.0 is required. Installing..."
     sudo apt-get update && sudo apt-get install -y dotnet-sdk-10.0
 fi
 
