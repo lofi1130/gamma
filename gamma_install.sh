@@ -1,25 +1,43 @@
 #!/bin/bash
 
-# 1. 루트 권한 확인
-if [ "$EUID" -ne 0 ]; then
-  echo "this script must be run with sudo privileges."
-  exit
-fi
+# Gamma installation script
+# This script clones the Gamma project from GitHub and installs it system-wide
 
-echo "[*] installing Gamma..."
+echo "[*] Installing Gamma..."
 
-# 2. 필수 종속성 설치 (dotnet sdk 확인 및 설치)
+# 1. Check if dotnet is installed
 if ! command -v dotnet &> /dev/null; then
-    echo "[*] .NET SDK is not installed. Installing..."
-    apt-get update && apt-get install -y dotnet-sdk-8.0
+    echo "[*] .NET SDK is not installed. Installing dotnet-sdk..."
+    sudo apt-get update && sudo apt-get install -y dotnet-sdk-10.0
 fi
 
-# 3. 빌드 및 배포 파일 생성
-echo "[*] building source code..."
+# 2. Clone the Gamma repository
+TEMP_DIR=$(mktemp -d)
+echo "[*] Cloning Gamma from GitHub..."
+git clone https://github.com/lofi1130/gamma.git "$TEMP_DIR/gamma"
+
+if [ ! -d "$TEMP_DIR/gamma" ]; then
+    echo "[-] Failed to clone repository."
+    exit 1
+fi
+
+cd "$TEMP_DIR/gamma/Gamma"
+
+# 3. Build the project
+echo "[*] Building Gamma..."
 dotnet publish -c Release -o ./publish
 
-# 4. PATH에 등록 (시스템 어디서든 'gamma'라고 쳐서 실행 가능하게)
-echo "[*] copying command to /usr/local/bin."
-cp ./publish/GammaTool /usr/local/bin/gamma
+if [ ! -f "./publish/Gamma" ]; then
+    echo "[-] Build failed. Executable not found."
+    exit 1
+fi
 
-echo "[+] installation complete! You can now run 'sudo gamma' from anywhere in the terminal."
+# 4. Copy to PATH (requires sudo)
+echo "[*] Installing to system..."
+sudo cp ./publish/Gamma /usr/local/bin/gamma
+sudo chmod +x /usr/local/bin/gamma
+
+# 5. Cleanup
+rm -rf "$TEMP_DIR"
+
+echo "[+] Installation complete! You can now run 'gamma' from anywhere in the terminal."
