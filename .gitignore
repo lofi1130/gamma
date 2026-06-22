@@ -1,0 +1,26 @@
+# .NET build output
+bin/
+obj/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+
+# Visual Studio files
+*.user
+*.suo
+*.userprefs
+*.resharper
+*.vs/
+
+# Rider files
+.idea/
+*.sln.iml
+
+# OS files
+.DS_Store
+*.log
+
+# User-specific files
+.vscode/
