@@ -39,8 +39,11 @@ sudo mkdir -p "$INSTALL_PATH"
 sudo cp -r ./publish/* "$INSTALL_PATH/"
 
 # Create wrapper script
-echo "#!/bin/bash" | sudo tee /usr/local/bin/gamma > /dev/null
-echo "exec dotnet $INSTALL_PATH/Gamma.dll \"\$@\"" | sudo tee -a /usr/local/bin/gamma > /dev/null
+sudo bash -c 'cat > /usr/local/bin/gamma << '\''EOF'\''
+#!/bin/bash
+exec dotnet /opt/gamma/Gamma.dll "$@"
+EOF
+'
 sudo chmod +x /usr/local/bin/gamma
 
 # 5. Cleanup
