@@ -28,13 +28,19 @@ echo "[*] Building Gamma..."
 dotnet publish -c Release -o ./publish
 
 if [ ! -f "./publish/Gamma" ]; then
-    echo "[-] Build failed. Executable not found."
+    echo "[-] Build failed. DLL not found."
     exit 1
 fi
 
-# 4. Copy to PATH (requires sudo)
+# 4. Install to system
 echo "[*] Installing to system..."
-sudo cp ./publish/Gamma /usr/local/bin/gamma
+INSTALL_PATH="/opt/gamma"
+sudo mkdir -p "$INSTALL_PATH"
+sudo cp -r ./publish/* "$INSTALL_PATH/"
+
+# Create wrapper script
+echo "#!/bin/bash" | sudo tee /usr/local/bin/gamma > /dev/null
+echo "exec dotnet $INSTALL_PATH/Gamma.dll \"\$@\"" | sudo tee -a /usr/local/bin/gamma > /dev/null
 sudo chmod +x /usr/local/bin/gamma
 
 # 5. Cleanup
