@@ -11,7 +11,7 @@ A C# console application featuring colorful ASCII art menu design with .NET 10.0
 
 ## Requirements
 
-- .NET SDK 10.0 or higher
+- .NET SDK 6.0 or higher
 - Git (for installation)
 
 ## Installation
